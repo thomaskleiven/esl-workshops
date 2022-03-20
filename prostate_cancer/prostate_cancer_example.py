@@ -6,7 +6,7 @@ df = pd.read_csv('./data/prostate.csv')
 df.corr() # many strong correlations (> .5)
 
 # Unit variance
-standardize = lambda x: (x / x.std())
+standardize = lambda x: ((x - np.mean(x)) / np.std(x))
 
 X_train = standardize(df.query("train == 'T'").drop(columns=['lpsa', 'train']))
 y_train = standardize(df.query("train == 'T'")['lpsa'])

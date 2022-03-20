@@ -6,12 +6,15 @@ df = pd.read_csv('./data/prostate.csv')
 df.corr() # many strong correlations (> .5)
 
 # Unit variance
-standardize = lambda x: ((x - np.mean(x)) / np.std(x))
+standardize = lambda x: ((x - x.mean()) / x.std())
 
-X_train = standardize(df.query("train == 'T'").drop(columns=['lpsa', 'train']))
+X_train = standardize(df.query("train == 'T'").drop(columns=['lpsa', 'train']).reset_index(drop=True))
 y_train = standardize(df.query("train == 'T'")['lpsa'])
-X_test = standardize(df.query("train == 'F'").drop(columns=['lpsa', 'train']))
+X_test = standardize(df.query("train == 'F'").drop(columns=['lpsa', 'train']).reset_index(drop=True))
 y_test = standardize(df.query("train == 'F'")['lpsa'])
+
+assert abs(X_train.var().sum() - X_train.shape[1]) < 1e-5
+assert abs(X_train.mean().sum()) < 1e-5
 
 # Fit using all predictors
 model = LinearRegression().fit(X_train, y_train)
